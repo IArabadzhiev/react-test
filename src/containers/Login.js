@@ -10,6 +10,12 @@ class Login extends Component {
         username: '',
         password: '',
         isLogged: false,
+        users: [
+            {
+                username: 'asdasd',
+                password: 'asdasd'
+            }
+        ],
         inputs: [
             {
                 value: '',
@@ -48,10 +54,11 @@ class Login extends Component {
         });
         return (
             <div>
+                <em>username/password:  asdasd / asdasd</em>
                 {this.state.inputs.map((input) => {
                     return <Input key={input.id} options={input.options} changeHandler={this.onInputChange}/>
                 })}
-                <button onClick={() =>this.props.logUser(user)}>Login</button>
+                <button onClick={() =>this.props.logUser(user, this.state.users)}>Login</button>
             </div>
         );
 
@@ -60,15 +67,30 @@ class Login extends Component {
 
 function mapDispatchToProps(dispatch) {
     return {
-        logUser: (user) => {
-            dispatch({
-                type: LOG_USER,
-                payload: {
-                username: user.username,
-                    password: user.password,
-                    isLogged: true
-                }
-            });
+        logUser: (user, availableUsers) => {
+            if (availableUsers.filter((availableUser) => {
+                    return availableUser.username === user.username
+                    && availableUser.password === user.password
+                }).length > 0
+            ) {
+                dispatch({
+                    type: LOG_USER,
+                    payload: {
+                        username: user.username,
+                        password: user.password,
+                        isLogged: true
+                    }
+                });
+            } else {
+                dispatch({
+                    type: LOG_USER,
+                    payload: {
+                        username: '',
+                        password: '',
+                        isLogged: false
+                    }
+                });
+            }
         }
     }
 }
